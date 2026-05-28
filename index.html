@@ -58,36 +58,14 @@ input,select,textarea,button{font-family:inherit}
 .header-actions{display:flex;gap:8px;align-items:center}
 .month-selector{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);border-radius:50px;padding:8px 14px;cursor:pointer;color:white;font-size:13px;font-weight:700;transition:transform 0.15s}
 .month-selector:active{transform:scale(0.92)}
-.sync-btn{
-background:rgba(255,255,255,0.14);
-border:1px solid rgba(255,255,255,0.18);
-border-radius:999px;
-width:40px;
-height:40px;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-transition:all 0.18s ease;
-position:relative;
-backdrop-filter:blur(8px);
--webkit-backdrop-filter:blur(8px)
-}
-.sync-btn:active{
-transform:scale(0.9)
-}
-.sync-btn:hover{
-background:rgba(255,255,255,0.2)
-}
-.sync-btn svg{
-width:18px;
-height:18px;
-stroke-width:2.2
-}
-.sync-btn.spinning svg{
-animation:spin 0.9s linear infinite
-}
-.sync-time{
+.sync-btn{background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:7px 14px;display:flex;align-items:center;gap:6px;cursor:pointer;transition:all 0.2s;position:relative;white-space:nowrap}
+.sync-btn:active{transform:scale(0.92);background:rgba(255,255,255,0.28)}
+.sync-btn:hover{background:rgba(255,255,255,0.24)}
+.sync-btn svg{width:13px;height:13px;flex-shrink:0;stroke-width:2.5}
+.sync-btn.spinning svg{animation:spin 1s linear infinite}
+.sync-btn-label{font-size:12px;font-weight:700;color:white;letter-spacing:0.2px}
+.sync-time{font-size:10px;color:rgba(255,255,255,0.6);font-weight:600}
+.sync-time-old{
 position:absolute;
 bottom:-18px;
 right:-4px;
@@ -99,7 +77,7 @@ font-weight:700
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .month-summary{display:flex;gap:8px;position:relative;z-index:1}
-.summary-pill{flex:1;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:12px}
+.summary-pill{flex:1;cursor:pointer;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:12px}
 .summary-pill .s-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:4px}
 .summary-pill .s-amount{font-size:16px;font-weight:800;color:white;letter-spacing:-0.3px}
 .summary-pill .s-amount.green{color:#30d158}
@@ -126,10 +104,6 @@ opacity:1
 .search-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:15px;font-weight:500;padding:13px 16px 13px 0;-webkit-appearance:none}
 .search-input::placeholder{color:var(--muted)}
 
-.filter-pills{display:flex;gap:8px;padding:12px 24px 0;overflow-x:auto;scrollbar-width:none}
-.filter-pills::-webkit-scrollbar{display:none}
-.filter-pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;white-space:nowrap;flex-shrink:0}
-.filter-pill.active{background:var(--navy);color:white;border-color:var(--navy)}
 
 /* ACCOUNTS */
 .accounts-scroll{display:flex;gap:12px;overflow-x:auto;padding:16px 24px 4px;scrollbar-width:none}
@@ -333,12 +307,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.5
       </div>
       <div class="header-actions">
         <button class="sync-btn" onclick="triggerHaptic();reloadDashboard(this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-<polyline points="23 4 23 10 17 10"></polyline>
-<polyline points="1 20 1 14 7 14"></polyline>
-<path d="M3.51 9a9 9 0 0114.13-3.36L23 10"></path>
-<path d="M20.49 15a9 9 0 01-14.13 3.36L1 14"></path>
-</svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0114.13-3.36L23 10"></path><path d="M20.49 15a9 9 0 01-14.13 3.36L1 14"></path></svg>
+          <span class="sync-btn-label">Sync</span>
           <span class="sync-time" id="syncTime"></span>
         </button>
         <button class="month-selector" onclick="triggerHaptic();openMonthModal()">
