@@ -111,10 +111,13 @@ font-weight:700
 
 .account-card{min-width:145px;background:var(--card);border-radius:20px;padding:16px;box-shadow:var(--shadow);flex-shrink:0;transition:transform 0.15s}
 .account-card:active{transform:scale(0.92)}
-.account-card.checking{border-top:3px solid #007aff}
-.account-card.hysa{border-top:3px solid #34c759}
+.account-card.chase-checking{border-top:3px solid #117ACA}
+.account-card.chase-savings{border-top:3px solid #117ACA}
+.account-card.disc-hysa{border-top:3px solid #f97316}
 .account-card.discover{border-top:3px solid #ff3b30}
-.account-card.emergency{border-top:3px solid #af52de}
+.account-card.sf-checking{border-top:3px solid #003366}
+.account-card.sf-savings{border-top:3px solid #003366}
+.account-card.summer{border-top:3px solid #f59e0b}
 .account-card.venmo{border-top:3px solid #32ade6}
 .account-card.apple{border-top:3px solid var(--apple-cash)}
 .account-card.cash{border-top:3px solid #ff9500}
@@ -429,8 +432,9 @@ input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.5
         <label>Account</label>
         <select id="account" class="soft-input">
           <option value="">Select account...</option>
-          <option>Checking</option><option>HYSA</option><option>Discover CC</option>
-          <option>Emergency</option><option>Venmo</option><option>Apple Cash</option><option>Cash Stash</option>
+          <option>Chase Checking</option><option>Chase Savings</option><option>Discover HYSA</option>
+          <option>Discover CC</option><option>SchoolsFirst Checking</option><option>SchoolsFirst Savings</option>
+          <option>Summer Savers</option><option>Venmo</option><option>Apple Cash</option><option>Cash Stash</option>
         </select>
       </div>
       <div class="field"><label>Transaction</label><input type="text" id="transaction" class="soft-input" placeholder="e.g. Uber, Target, Costco" autocomplete="off"/></div>
@@ -504,8 +508,9 @@ input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.5
       <div class="field">
         <label>Account</label>
         <select id="editAccount" class="soft-input">
-          <option>Checking</option><option>HYSA</option><option>Discover CC</option>
-          <option>Emergency</option><option>Venmo</option><option>Apple Cash</option><option>Cash Stash</option>
+          <option>Chase Checking</option><option>Chase Savings</option><option>Discover HYSA</option>
+          <option>Discover CC</option><option>SchoolsFirst Checking</option><option>SchoolsFirst Savings</option>
+          <option>Summer Savers</option><option>Venmo</option><option>Apple Cash</option><option>Cash Stash</option>
         </select>
       </div>
       <div class="field"><label>Transaction</label><input type="text" id="editTransaction" class="soft-input" autocomplete="off"/></div>
@@ -585,9 +590,9 @@ input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.5
 <script>
 const API = "https://script.google.com/macros/s/AKfycbzpUcK9bkimBFxGG388uz0Uh5jQ7KMyMmzKxvUkKguOHkEYL582oUdhOFTUQ5lLXAuR/exec";
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-const ACCT_COLORS = {"Checking":"#007aff","HYSA":"#34c759","Discover CC":"#ff3b30","Emergency":"#af52de","Venmo":"#32ade6","Apple Cash":"#8e8e93","Cash Stash":"#ff9500"};
-const ACCT_ICONS = {"Checking":"🏦","HYSA":"💰","Discover CC":"💳","Emergency":"🚨","Venmo":"📱","Apple Cash":"🍎","Cash Stash":"💵"};
-const ACCT_CLASS = {"Checking":"checking","HYSA":"hysa","Discover CC":"discover","Emergency":"emergency","Venmo":"venmo","Apple Cash":"apple","Cash Stash":"cash"};
+const ACCT_COLORS = {"Chase Checking":"#117ACA","Chase Savings":"#117ACA","Discover HYSA":"#f97316","Discover CC":"#ff3b30","SchoolsFirst Checking":"#003366","SchoolsFirst Savings":"#003366","Summer Savers":"#f59e0b","Venmo":"#32ade6","Apple Cash":"#555555","Cash Stash":"#ff9500"};
+const ACCT_ICONS = {"Chase Checking":"🏦","Chase Savings":"🏦","Discover HYSA":"💰","Discover CC":"💳","SchoolsFirst Checking":"🏫","SchoolsFirst Savings":"🏫","Summer Savers":"☀️","Venmo":"📱","Apple Cash":"🍎","Cash Stash":"💵"};
+const ACCT_CLASS = {"Chase Checking":"chase-checking","Chase Savings":"chase-savings","Discover HYSA":"disc-hysa","Discover CC":"discover","SchoolsFirst Checking":"sf-checking","SchoolsFirst Savings":"sf-savings","Summer Savers":"summer","Venmo":"venmo","Apple Cash":"apple","Cash Stash":"cash"};
 const CAT_COLORS = {
   'Transit & Rideshare':'#af52de','Online Shopping':'#ff2d55','Groceries':'#34c759',
   'Food & Dining':'#ff9500','Coffee & Drinks':'#ff3b30','Subscriptions':'#007aff',
@@ -1112,10 +1117,26 @@ async function submitTransaction(){
 }
 
 // CUSTOM EMOJI — persisted via localStorage
-function accountEmoji(acct){
-  const custom=JSON.parse(localStorage.getItem('acctEmojis')||'{}');
-  return custom[acct]||ACCT_ICONS[acct]||'💼';
+const ACCT_FAVICONS = {
+  "Chase Checking":"https://www.chase.com/favicon.ico",
+  "Chase Savings":"https://www.chase.com/favicon.ico",
+  "Discover HYSA":"https://www.discover.com/favicon.ico",
+  "Discover CC":"https://www.discover.com/favicon.ico",
+  "SchoolsFirst Checking":"https://www.schoolsfirstfcu.org/favicon.ico",
+  "SchoolsFirst Savings":"https://www.schoolsfirstfcu.org/favicon.ico",
+  "Summer Savers":"https://www.schoolsfirstfcu.org/favicon.ico",
+  "Venmo":"https://venmo.com/favicon.ico",
+  "Apple Cash":"https://www.apple.com/favicon.ico",
+  "Cash Stash":""
+};
+
+function accountLogo(acct){
+  const url=ACCT_FAVICONS[acct];
+  if(!url)return `<span style="font-size:18px">${ACCT_ICONS[acct]||'💵'}</span>`;
+  return `<img src="${url}" width="22" height="22" style="border-radius:5px;object-fit:contain" onerror="this.outerHTML='<span style=\'font-size:18px\'>${ACCT_ICONS[acct]||'💼'}</span>'">`;
 }
+
+function accountEmoji(acct){ return accountLogo(acct); }
 
 function openAccountDetail(acct){
   if(!cachedData)return;
@@ -1123,7 +1144,7 @@ function openAccountDetail(acct){
   const bal=(cachedData.currentBalances||[]).find(a=>a.account===acct);
   const val=bal?getVal(bal.balance):0;
   const isCC=acct==='Discover CC';
-  document.getElementById('acctDetailIcon').textContent=accountEmoji(acct);
+  document.getElementById('acctDetailIcon').innerHTML=accountLogo(acct);
   document.getElementById('acctDetailIcon').style.background=(ACCT_COLORS[acct]||'#8e8e93')+'22';
   document.getElementById('acctDetailName').textContent=acct;
   document.getElementById('acctDetailBalance').textContent=isCC?`You owe $${fmt(Math.abs(val))}`:`Balance: $${fmt(val)}`;
@@ -1149,30 +1170,6 @@ function openAccountDetail(acct){
 }
 
 // CUSTOM EMOJI PICKER — long press account card
-let pressTimer=null;
-document.addEventListener('touchstart',e=>{
-  const card=e.target.closest('.account-card');
-  if(!card)return;
-  pressTimer=setTimeout(()=>{
-    const acct=card.querySelector('.account-name').textContent;
-    const emojis=['🏦','💰','💳','🚨','📱','🍎','💵','🎯','🏆','⭐','🔥','💎','🌟','🎉','🌴'];
-    const picker=document.createElement('div');
-    picker.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border-radius:20px;padding:20px;z-index:999;box-shadow:0 20px 60px rgba(0,0,0,0.4);width:280px';
-    picker.innerHTML=`<div style="font-size:15px;font-weight:800;text-align:center;margin-bottom:14px;color:var(--text)">Pick icon for ${acct}</div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">${emojis.map(e=>`<button onclick="saveEmoji('${acct}','${e}',this.closest('[style]'))" style="font-size:24px;width:44px;height:44px;border:none;background:var(--input-bg);border-radius:10px;cursor:pointer">${e}</button>`).join('')}</div><button onclick="this.closest('[style]').remove()" style="width:100%;margin-top:14px;background:var(--input-bg);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer">Cancel</button>`;
-    document.body.appendChild(picker);
-    triggerHaptic();
-  },600);
-},{passive:true});
-document.addEventListener('touchend',()=>{clearTimeout(pressTimer);},{passive:true});
-
-function saveEmoji(acct,emoji,el){
-  const custom=JSON.parse(localStorage.getItem('acctEmojis')||'{}');
-  custom[acct]=emoji;
-  localStorage.setItem('acctEmojis',JSON.stringify(custom));
-  el.remove();
-  if(cachedData)renderDashboard(cachedData);
-  showToast('Icon updated!');
-}
 
 // ANIMATED BALANCE COUNTER
 function animateCount(el, target, prefix='$', duration=800){
@@ -1259,7 +1256,7 @@ let lastScrubIdx = -1;
 
 function openCashFlowModal(){
   if(!cachedData)return;
-  document.getElementById('cashFlowMonthLabel').textContent=currentMonth+' · Checking account';
+  document.getElementById('cashFlowMonthLabel').textContent=currentMonth+' · Chase Checking account';
   renderCashFlowChart(cachedData,'cashFlowChart','cashFlowLabels',true);
   document.getElementById('cashFlowModal').classList.add('open');
 }
@@ -1270,10 +1267,10 @@ function renderCashFlowChart(data, chartId, labelsId, showFull){
   const tooltipEl=document.getElementById('cashFlowTooltip');
   if(!chartEl)return;
 
-  const startBal=(data.currentBalances||[]).find(a=>a.account==='Checking');
+  const startBal=(data.currentBalances||[]).find(a=>a.account==='Chase Checking');
   let runBal=startBal?getVal(startBal.balance):0;
 
-  const txs=(data.transactions||[]).slice().reverse().filter(t=>t.account==='Checking');
+  const txs=(data.transactions||[]).slice().reverse().filter(t=>t.account==='Chase Checking');
   const dayMap={};
   txs.forEach(tx=>{
     const key=String(tx.date||'');
