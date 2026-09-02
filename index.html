@@ -113,11 +113,9 @@ font-weight:700
 .account-card:active{transform:scale(0.92)}
 .account-card.chase-checking{border-top:3px solid #117ACA}
 .account-card.chase-savings{border-top:3px solid #117ACA}
-.account-card.disc-hysa{border-top:3px solid #f97316}
+.account-card.cap-one{border-top:3px solid #c8102e}
 .account-card.discover{border-top:3px solid #ff3b30}
 .account-card.sf-checking{border-top:3px solid #003366}
-.account-card.sf-savings{border-top:3px solid #003366}
-.account-card.summer{border-top:3px solid #f59e0b}
 .account-card.venmo{border-top:3px solid #32ade6}
 .account-card.apple{border-top:3px solid var(--apple-cash)}
 .account-card.cash{border-top:3px solid #ff9500}
@@ -432,9 +430,9 @@ input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.5
         <label>Account</label>
         <select id="account" class="soft-input">
           <option value="">Select account...</option>
-          <option>Chase Checking</option><option>Chase Savings</option><option>Discover HYSA</option>
-          <option>Discover CC</option><option>SchoolsFirst Checking</option><option>SchoolsFirst Savings</option>
-          <option>Summer Savers</option><option>Venmo</option><option>Apple Cash</option><option>Cash Stash</option>
+          <option>Chase Checking</option><option>Chase Savings</option><option>Capital One HYSA</option>
+          <option>Discover CC</option><option>SchoolsFirst Checking</option>
+          <option>Venmo</option><option>Apple Cash</option><option>Cash Stash</option>
         </select>
       </div>
       <div class="field"><label>Transaction</label><input type="text" id="transaction" class="soft-input" placeholder="e.g. Uber, Target, Costco" autocomplete="off"/></div>
@@ -508,9 +506,9 @@ input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.5
       <div class="field">
         <label>Account</label>
         <select id="editAccount" class="soft-input">
-          <option>Chase Checking</option><option>Chase Savings</option><option>Discover HYSA</option>
-          <option>Discover CC</option><option>SchoolsFirst Checking</option><option>SchoolsFirst Savings</option>
-          <option>Summer Savers</option><option>Venmo</option><option>Apple Cash</option><option>Cash Stash</option>
+          <option>Chase Checking</option><option>Chase Savings</option><option>Capital One HYSA</option>
+          <option>Discover CC</option><option>SchoolsFirst Checking</option>
+          <option>Venmo</option><option>Apple Cash</option><option>Cash Stash</option>
         </select>
       </div>
       <div class="field"><label>Transaction</label><input type="text" id="editTransaction" class="soft-input" autocomplete="off"/></div>
@@ -588,11 +586,11 @@ input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.5
 <div class="toast" id="toast"></div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyaVR5Zpn4H6R3YnmTeERZBb2A4PLll2begyN6-Q0771ApPdQUNPhBq9BIBd7DUf2Le/exec";
+const API = "https://script.google.com/macros/s/AKfycbwYoutDlKtXWSX3rfV9Mf3_bCPSWAkQ3ZvFn4TnGu3iA6SLC3x6IGnukunj1PWFSt2y/exec";
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-const ACCT_COLORS = {"Chase Checking":"#117ACA","Chase Savings":"#117ACA","Discover HYSA":"#f97316","Discover CC":"#ff3b30","SchoolsFirst Checking":"#003366","SchoolsFirst Savings":"#003366","Summer Savers":"#f59e0b","Venmo":"#32ade6","Apple Cash":"#555555","Cash Stash":"#ff9500"};
-const ACCT_ICONS = {"Chase Checking":"🏦","Chase Savings":"🏦","Discover HYSA":"💰","Discover CC":"💳","SchoolsFirst Checking":"🏫","SchoolsFirst Savings":"🏫","Summer Savers":"☀️","Venmo":"📱","Apple Cash":"🍎","Cash Stash":"💵"};
-const ACCT_CLASS = {"Chase Checking":"chase-checking","Chase Savings":"chase-savings","Discover HYSA":"disc-hysa","Discover CC":"discover","SchoolsFirst Checking":"sf-checking","SchoolsFirst Savings":"sf-savings","Summer Savers":"summer","Venmo":"venmo","Apple Cash":"apple","Cash Stash":"cash"};
+const ACCT_COLORS = {"Chase Checking":"#117ACA","Chase Savings":"#117ACA","Capital One HYSA":"#c8102e","Discover CC":"#ff3b30","SchoolsFirst Checking":"#003366","Venmo":"#32ade6","Apple Cash":"#555555","Cash Stash":"#ff9500"};
+const ACCT_ICONS = {"Chase Checking":"🏦","Chase Savings":"🏦","Capital One HYSA":"💰","Discover CC":"💳","SchoolsFirst Checking":"🏫","Venmo":"📱","Apple Cash":"🍎","Cash Stash":"💵"};
+const ACCT_CLASS = {"Chase Checking":"chase-checking","Chase Savings":"chase-savings","Capital One HYSA":"cap-one","Discover CC":"discover","SchoolsFirst Checking":"sf-checking","Venmo":"venmo","Apple Cash":"apple","Cash Stash":"cash"};
 const CAT_COLORS = {
   'Transit & Rideshare':'#af52de','Online Shopping':'#ff2d55','Groceries':'#34c759',
   'Food & Dining':'#ff9500','Coffee & Drinks':'#ff3b30','Subscriptions':'#007aff',
@@ -738,14 +736,17 @@ function renderDashboard(data){
   }).join('');
 
   filterTransactions();
-  // Animate account balance numbers
-  setTimeout(()=>{
-    document.querySelectorAll('.account-balance').forEach(el=>{
-      const txt=el.textContent.replace(/[$,]/g,'');
-      const num=parseFloat(txt)||0;
-      if(num>0)animateCount(el,num);
-    });
-  },50);
+  // Animate account balance numbers — only on first load
+  if(!window._balAnimated){
+    window._balAnimated=true;
+    setTimeout(()=>{
+      document.querySelectorAll('.account-balance').forEach(el=>{
+        const txt=el.textContent.replace(/[$,]/g,'');
+        const num=parseFloat(txt)||0;
+        if(num>0)animateCount(el,num);
+      });
+    },50);
+  }
 }
 
 function setFilter(f){
@@ -918,7 +919,9 @@ ${tx.account ? ' • '+tx.account : ''}
 
   if(!yearlyDataLoaded)fetchYearlyData();
   fetchMonthComparison();
-  setTimeout(()=>renderCashFlowChart(data,'cashFlowMiniChart',null,false),100);
+  const hasCkTx=(data.transactions||[]).some(t=>t.account==='Chase Checking');
+  if(hasCkTx)setTimeout(()=>renderCashFlowChart(data,'cashFlowMiniChart',null,false),100);
+  else{const m=document.getElementById('cashFlowMiniChart');if(m)m.innerHTML='<div style="text-align:center;font-size:12px;color:var(--muted);padding:10px">No Chase Checking activity this month</div>';}
 }
 
 async function fetchMonthComparison(){
@@ -999,8 +1002,8 @@ async function fetchYearlyData(){
 // MODALS
 function openLogModal(){clearForm();document.getElementById('logModal').classList.add('open');}
 function closeModals(e){if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');}
-function closeTxSheet(){document.getElementById('txActionModal').classList.remove('open');}
-function closeEdit(){document.getElementById('editOverlay').classList.remove('open');editingIdx=null;}
+function closeTxSheet(){document.getElementById('txActionModal').classList.remove('open');selectedTxIdx=null;}
+function closeEdit(){document.getElementById('editOverlay').classList.remove('open');editingIdx=null;selectedTxIdx=null;}
 
 function openMonthModal(){
   document.getElementById('monthList').innerHTML=MONTHS.map(m=>`<button class="month-option ${m===currentMonth?'selected':''}" onclick="triggerHaptic();selectMonth('${m}')">${m} 2026${m===currentMonth?' <span style="color:var(--blue)">✓</span>':''}</button>`).join('');
@@ -1012,7 +1015,7 @@ function selectMonth(m){
   ['selectedMonthLabel','insightsSelectorLabel'].forEach(id=>document.getElementById(id).textContent=m);
   document.getElementById('insightsMonthLabel').textContent='Overview for '+m;
   document.getElementById('monthModal').classList.remove('open');
-  cachedData=null;yearlyDataLoaded=false;reloadDashboard();
+  cachedData=null;yearlyDataLoaded=false;window._balAnimated=false;reloadDashboard();
 }
 
 function openTxSheet(idx){
@@ -1109,7 +1112,7 @@ async function submitTransaction(){
       const o=document.getElementById('successOverlay');
       document.getElementById('successText').textContent='Logged!';
       o.classList.add('show');triggerHaptic();
-      if(txType==='income'&&parseFloat(payload.amount)>=25)launchConfetti();
+      if(txType==='income'&&parseFloat(payload.amount)>=25&&!isTransfer({transaction:payload.transaction,note:payload.note}))launchConfetti();
       setTimeout(()=>{o.classList.remove('show');reloadDashboard();},1500);
     }else showToast(json.error||'Something went wrong','error');
   }catch(e){showToast('Network error','error');}
@@ -1120,11 +1123,9 @@ async function submitTransaction(){
 const ACCT_FAVICONS = {
   "Chase Checking":"https://www.chase.com/favicon.ico",
   "Chase Savings":"https://www.chase.com/favicon.ico",
-  "Discover HYSA":"https://www.discover.com/favicon.ico",
+  "Capital One HYSA":"https://www.capitalone.com/favicon.ico",
   "Discover CC":"https://www.discover.com/favicon.ico",
   "SchoolsFirst Checking":"https://www.schoolsfirstfcu.org/favicon.ico",
-  "SchoolsFirst Savings":"https://www.schoolsfirstfcu.org/favicon.ico",
-  "Summer Savers":"https://www.schoolsfirstfcu.org/favicon.ico",
   "Venmo":"https://venmo.com/favicon.ico",
   "Apple Cash":"https://www.apple.com/favicon.ico",
   "Cash Stash":""
